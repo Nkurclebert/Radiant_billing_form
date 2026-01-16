@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "app/(root)/page.jsx", "app/layout.jsx", "app/(auth)/layout.jsx"  ],
+, "app/(root)/page.jsx", "app/layout.jsx", "app/(auth)/layout.jsx", "constants/index.js"  ],
   "exclude": ["node_modules"]
 }

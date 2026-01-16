@@ -1,1 +1,20 @@
 @import "tailwindcss";
+
+@layer utilities {
+  /* Sidebar */
+  .sidebar {
+    @apply sticky left-0 top-0 flex h-screen flex-col justify-between border-r border-gray-200 bg-white pt-8 text-white;
+  }
+
+  .sidebar-logo {
+    @apply font-bold text-[26px]; /* only core utilities */
+  }
+
+  .sidebar-link {
+    @apply flex items-center justify-center gap-3 rounded-lg py-1; 
+  }
+
+  .sidebar-label {
+    @apply font-semibold; 
+  }
+}
