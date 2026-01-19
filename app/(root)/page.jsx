@@ -14,6 +14,59 @@ export default function BillingForm() {
   // const handleDownload = () => {
   //   alert("PDF download triggered!"); // placeholder
   // };
+  const [policyText, setPolicyText] = useState('');
+  const [bills, setBills] = useState([]);
+  const [pdfReady, setPdfReady] = useState(false);
+
+  // Function to extract policy IDs from the textarea input
+  const extractPolicyIds = () => {
+    return policyText
+      .split(/[\n,]+/) // split by newlines or commas
+      .map(id => id.trim())
+      .filter(id => id.length > 0);
+  }
+
+  // Handle form submission to fetch bills
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const policyIds = extractPolicyIds();
+
+    if(policyIds.length === 0){
+      alert("Please enter at least one policy number.");
+      return;
+    }
+
+    const res = await fetch('/api/generateBills', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({policyIds}),
+    });
+
+    const data = await res.json();
+
+    setBills(data.bills);
+    setPdfReady(true);
+  };
+
+
+  // Handle PDF download
+  const handleDownload = async () => {
+    const policyIds = extractPolicyIds();
+
+    const res = await fetch(
+      `/api/downloadPdf?ids=${policyIds.join(',')}`
+    );
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'billing.pdf';
+    a.click();
+  };
+
 
   return (
     <div className="isolate bg-gray-50 px-6 py-24 sm:py-32 lg:px-8 relative">
@@ -37,7 +90,7 @@ export default function BillingForm() {
           <p className="mt-2 text-lg/8 text-gray-600">Provide policy-number(s) to download the bill(s) .</p>
         </div>
       </div>
-      <form action="#" method="POST" className="mx-auto mt-16 max-w-xl sm:mt-20">
+      <form action="#" method="POST" className="mx-auto mt-16 max-w-xl sm:mt-20" onSubmit={handleSubmit}>
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
           
           <div className="sm:col-span-2">
@@ -49,9 +102,13 @@ export default function BillingForm() {
                 id="policy-numbers"
                 name="policy-numbers"
                 rows={4}
-                className="block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-white outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
-                defaultValue={''}
+                value={policyText}
+                className="block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-black outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
                 placeholder="E.g., RD001MOTO0260001, RD001MOTO0260002"
+                onChange={(e) => {
+                  setPolicyText(e.target.value); 
+                  setPdfReady(false)
+                }}
               />
             </div>
           </div>
@@ -61,6 +118,7 @@ export default function BillingForm() {
           <button
             type="submit"
             className="block w-full rounded-md bg-blue-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-blue-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            
           >
             Submit and Check
           </button>
@@ -68,12 +126,31 @@ export default function BillingForm() {
 
         <div className="mt-10">
           <button
-            type="submit"
+            type="button"
             className="block w-full rounded-md bg-green-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            onClick={handleDownload}
+            disabled={!pdfReady}
           >
             Download bill (PDF)
           </button>
         </div>
+        
+          {bills.length > 0 && (
+            <div className="mt-10 bg-white rounded-lg p-6 text-left">
+              <h3 className="text-lg font-semibold mb-3 text-gray-900">
+                Bill Preview
+              </h3>
+                    
+              <ul className="space-y-2">
+                {bills.map((bill, i) => (
+                  <li key={i} className="text-gray-700">
+                    {bill.summary}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
       </form>
     </div>
   );
