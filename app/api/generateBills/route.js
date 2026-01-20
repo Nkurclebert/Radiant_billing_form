@@ -12,10 +12,10 @@ export async function POST(req) {
   const placeholders = policyIds.map(() => "?").join(",");
 
   const [rows] = await db.query(
-    `SELECT policy_id, amount 
-     FROM policies 
-     WHERE policy_id IN (${placeholders})`,
-    policyIds
+    `SELECT files 
+     FROM ebmfile 
+     WHERE police IN (${placeholders})`,
+    policyIds,
   );
 
   const bills = rows.map((row) => ({

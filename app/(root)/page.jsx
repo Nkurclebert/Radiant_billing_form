@@ -2,21 +2,13 @@
 import { useState } from 'react';
 
 export default function BillingForm() {
-  // const [policyIds, setPolicyIds] = useState('');
-  // const [pdfReady, setPdfReady] = useState(false);
-
-  // const handleSubmit = async () => {
-  //   const idsArray = policyIds.split(/[\n,]+/).map(id => id.trim()).filter(Boolean);
-  //   console.log(idsArray); // later: send to API
-  //   setPdfReady(true);
-  // };
-
-  // const handleDownload = () => {
-  //   alert("PDF download triggered!"); // placeholder
-  // };
+  
   const [policyText, setPolicyText] = useState('');
   const [bills, setBills] = useState([]);
   const [pdfReady, setPdfReady] = useState(false);
+  const [checkStatus, setCheckStatus] = useState(null);
+
+
 
   // Function to extract policy IDs from the textarea input
   const extractPolicyIds = () => {
@@ -45,8 +37,19 @@ export default function BillingForm() {
 
     const data = await res.json();
 
+
+
     setBills(data.bills);
-    setPdfReady(true);
+
+        if (data.bills.length > 0) {
+          setCheckStatus("available");
+          setPdfReady(true);
+        } else {
+          setCheckStatus("not-available");
+          setPdfReady(false);
+        }
+    
+
   };
 
 
@@ -94,8 +97,21 @@ export default function BillingForm() {
         <div className="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
           
           <div className="sm:col-span-2">
-            <label htmlFor="policy-numbers" className="block text-sm/6 font-semibold text-gray-900">
+            <label htmlFor="policy-numbers" 
+              className="flex items-center gap-3 text-sm font-semibold text-gray-900">
               Insert Policy Number(s):
+
+              {checkStatus === "available" && (
+                <span className="text-green-600 text-sm font-medium">
+                   Policy number(s) available
+                </span>
+              )}
+            
+              {checkStatus === "not-available" && (
+                <span className="text-red-600 text-sm font-medium">
+                   Policy number(s) not available
+                </span>
+              )}
             </label>
             <div className="mt-2.5">
               <textarea
@@ -106,7 +122,8 @@ export default function BillingForm() {
                 className="block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-black outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
                 placeholder="E.g., RD001MOTO0260001, RD001MOTO0260002"
                 onChange={(e) => {
-                  setPolicyText(e.target.value); 
+                  setPolicyText(e.target.value);
+                  setCheckStatus(null); 
                   setPdfReady(false)
                 }}
               />
@@ -127,11 +144,19 @@ export default function BillingForm() {
         <div className="mt-10">
           <button
             type="button"
-            className="block w-full rounded-md bg-green-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            className="block w-full rounded-md bg-green-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-400 
+            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500
+            
+            disabled:bg-gray-400
+            disabled:hover:bg-gray-400
+            disabled:cursor-not-allowed
+            disabled:opacity-60
+            "
             onClick={handleDownload}
             disabled={!pdfReady}
           >
-            Download bill (PDF)
+            {pdfReady ? "Download bill (PDF)" : "Generate bill first"}
+
           </button>
         </div>
         
