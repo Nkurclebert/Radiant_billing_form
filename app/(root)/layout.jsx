@@ -1,16 +1,21 @@
-import Sidebar from "../../components/ui/Sidebar"
+import Sidebar from "../../components/ui/Sidebar";
 
 export default function RootLayout({ children }) {
-    const loggedIn = {firstName: 'Clebert', lastName: ' Nkuranga'}
+  
 
   return (
-    <main className="flex h-screen w-full font-inter">
-        <div className="border-r border-gray-300 pr-10 pl-10 h-screen">
-            <Sidebar user={loggedIn} className=''/>
-        </div>
-        <div className="flex-1 flex items-center justify-center bg-gray-50">
-            {children}
-        </div>
-    </main>
-  )
+    <div className="flex h-screen overflow-hidden font-inter">
+      
+      {/* Sidebar — fixed */}
+      <aside className="fixed left-0 top-0 h-screen w-64 border-r border-gray-300 bg-white z-50 pr-10 pl-5">
+        <Sidebar />
+      </aside>
+
+      {/* Main content — scrolls */}
+      <main className="ml-64 flex-1 h-screen overflow-y-auto bg-gray-50">
+        {children}
+      </main>
+
+    </div>
+  );
 }

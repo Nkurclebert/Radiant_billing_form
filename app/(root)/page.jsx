@@ -7,6 +7,8 @@ export default function BillingForm() {
   const [bills, setBills] = useState([]);
   const [pdfReady, setPdfReady] = useState(false);
   const [checkStatus, setCheckStatus] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+
 
 
 
@@ -44,9 +46,15 @@ export default function BillingForm() {
         if (data.bills.length > 0) {
           setCheckStatus("available");
           setPdfReady(true);
+
+          const policyIds = extractPolicyIds();
+          const url = `/api/downloadPdf?ids=${policyIds.join(",")}&preview=true`;
+
+          setPreviewUrl(url);
         } else {
           setCheckStatus("not-available");
           setPdfReady(false);
+          setPreviewUrl(null);
         }
     
 
@@ -72,7 +80,7 @@ export default function BillingForm() {
 
 
   return (
-    <div className="isolate bg-gray-50 px-6 py-24 sm:py-32 lg:px-8 relative">
+    <div className="isolate bg-gray-50 px-6 py-16 sm:py-24 lg:px-8 relative">
       
       <div
         aria-hidden="true"
@@ -119,7 +127,7 @@ export default function BillingForm() {
                 name="policy-numbers"
                 rows={4}
                 value={policyText}
-                className="block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-black outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"
+                className="block w-full rounded-md bg-white/5 px-3.5 py-2 text-base text-black outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-sky-400"
                 placeholder="E.g., RD001MOTO0260001, RD001MOTO0260002"
                 onChange={(e) => {
                   setPolicyText(e.target.value);
@@ -134,7 +142,7 @@ export default function BillingForm() {
         <div className="mt-10">
           <button
             type="submit"
-            className="block w-full rounded-md bg-blue-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-blue-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+            className="block w-full rounded-md bg-sky-400 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-sky-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-700"
             
           >
             Submit and Check
@@ -145,7 +153,7 @@ export default function BillingForm() {
           <button
             type="button"
             className="block w-full rounded-md bg-green-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-green-400 
-            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500
+            focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-500
             
             disabled:bg-gray-400
             disabled:hover:bg-gray-400
@@ -160,21 +168,22 @@ export default function BillingForm() {
           </button>
         </div>
         
-          {bills.length > 0 && (
-            <div className="mt-10 bg-white rounded-lg p-6 text-left">
-              <h3 className="text-lg font-semibold mb-3 text-gray-900">
-                Bill Preview
-              </h3>
-                    
-              <ul className="space-y-2">
-                {bills.map((bill, i) => (
-                  <li key={i} className="text-gray-700">
-                    {bill.summary}
-                  </li>
-                ))}
-              </ul>
+        {previewUrl && (
+          <div className="mt-10 bg-white rounded-lg p-4 shadow border border-gray-200">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">
+              Bill Preview (PDF)
+            </h3>
+                  
+            <div className="h-80 border rounded overflow-hidden">
+              <iframe
+                src={previewUrl}
+                className="w-full h-full"
+                title="PDF Preview"
+              />
             </div>
-          )}
+          </div>
+        )}
+          
 
       </form>
     </div>
