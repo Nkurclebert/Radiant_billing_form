@@ -8,6 +8,7 @@ export default function BillingForm() {
   const [pdfReady, setPdfReady] = useState(false);
   const [checkStatus, setCheckStatus] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
+  
 
 
 
@@ -170,11 +171,20 @@ export default function BillingForm() {
         
         {previewUrl && (
           <div className="mt-10 bg-white rounded-lg p-4 shadow border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">
-              Bill Preview (PDF)
-            </h3>
+            <div className='flex items-center justify-between mb-3'>
+              <h3 className="text-lg font-semibold text-gray-900 mb-3">
+                Bill Preview (PDF)
+              </h3>
+
+              <button
+                onClick={() => setPreviewUrl(null)}
+                className="text-gray-500 hover:text-red-500 text-2xl font-bold"
+              >
+                ×
+              </button>
+            </div>
                   
-            <div className="h-80 border rounded overflow-hidden">
+            <div className="h-120 border rounded overflow-hidden">
               <iframe
                 src={previewUrl}
                 className="w-full h-full"
