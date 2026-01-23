@@ -1,4 +1,5 @@
 import Sidebar from "../../components/ui/Sidebar";
+import Navbar from "../../components/ui/Navbar";
 
 export default function RootLayout({ children }) {
   
@@ -13,6 +14,9 @@ export default function RootLayout({ children }) {
 
       {/* Main content — scrolls */}
       <main className=" md:ml-64 flex-1 h-screen overflow-y-auto bg-gray-50">
+        <div className="block md:hidden">
+          <Navbar />
+        </div>
         {children}
       </main>
 

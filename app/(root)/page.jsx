@@ -81,7 +81,7 @@ export default function BillingForm() {
 
 
   return (
-    <div className="isolate bg-gray-50 px-6 py-16 sm:py-24 lg:px-8 relative">
+    <div className="md:isolate bg-gray-50 px-6 py-16 sm:py-24 lg:px-8 relative">
       
       <div
         aria-hidden="true"

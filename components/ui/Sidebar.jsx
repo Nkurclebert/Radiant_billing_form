@@ -5,11 +5,11 @@ import Link from 'next/link'
 import cn from 'clsx'
 
 
-import React, { use } from 'react'
+import React  from 'react'
 import { usePathname } from 'next/navigation';
 import { sidebarLinks } from '../../constants';
 
-const Sidebar = (user) => {
+const Sidebar = () => {
     const pathname = usePathname();
 
   return (
