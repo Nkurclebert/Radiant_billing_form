@@ -2,8 +2,9 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
+import cn from 'clsx'
 
-import { cn } from "@/lib/utils";
+
 import React, { use } from 'react'
 import { usePathname } from 'next/navigation';
 import { sidebarLinks } from '../../constants';
@@ -36,7 +37,7 @@ const Sidebar = (user) => {
                             alt={item.label}
                             className={cn({ "brightness-[3] invert-0": isActive })}
                         />
-                        <p className="text-16 font-semibold max-md:hidden">
+                        <p className="text-16 font-semibold">
                             {item.label}
                         </p>
                     </Link>
